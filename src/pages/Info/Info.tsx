@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./Info.css";
 
 interface Doctor {
@@ -16,6 +17,7 @@ export default function Info() {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { doctorId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (doctorId) {
@@ -34,6 +36,31 @@ export default function Info() {
     } finally {
         setIsLoading(false);
     }
+};
+
+const deleteDoctor = async () => {
+  if (!doctor) return;
+
+  const confirmDelete = window.confirm(`Voulez-vous vraiment supprimer Dr. ${doctor.firstname} ${doctor.lastname} ?`);
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`https://127.0.0.1:8000/api/doctors/${doctor.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+    }
+
+    alert("Docteur supprimé avec succès.");
+    navigate("/"); // Redirection vers la page d'accueil après suppression
+  } catch (error) {
+    console.error("Erreur lors de la suppression du docteur:", error);
+  }
 };
 
   if (isLoading) {
@@ -70,11 +97,13 @@ export default function Info() {
           </div>
         </div>
         <div className="buttonContainer">
+        <Link to={`/edit/${doctor.id}`}>
         <div className="buttonOne">
         <button className="edit">Mettre à jour</button>
         </div>
+        </Link>
         <div className="buttonTwo">
-        <button className="delete">Supprimer</button>
+        <button className="delete" onClick={deleteDoctor}>Supprimer</button>
         </div>
       </div>
       </div>

@@ -21,15 +21,13 @@ function Home() {
 
     const fetchDoctors = async () => {
         try {
-            const response = await fetch("https://127.0.0.1:8000/api/doctors");
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/doctors`);
             const data = await response.json();
             setDoctors(data.member);
         } catch (error) {
             console.error(error);
         }
     };
-    
-    
 
     return(
         <div className="container">
@@ -44,7 +42,7 @@ function Home() {
                 <p><strong>Ville:</strong> {doctor.city}</p>
                 <p><strong>Téléphone:</strong> {doctor.phone}</p>
             </div>
-            <Link to="/info" className='underscore'>
+            <Link to={`/info/${doctor.id}`} className='underscore'>
             <button className="button-style" role="button"><span className="text">Voir Plus</span></button>
             </Link>
         </div>

@@ -47,7 +47,8 @@ export default function Edit() {
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/merge-patch+json",
+            "Accept": "application/ld+json",
           },
           body: JSON.stringify(doctor),
         }

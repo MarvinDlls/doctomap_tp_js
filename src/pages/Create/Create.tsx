@@ -1,179 +1,158 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-interface Doctor {
-  firstname: string;
-  lastname: string;
-  speciality: string;
-  city: string;
-  image: string;
-  phone: string;
-}
 
-export default function Create() {
-  const [doctor, setDoctor] = useState<Doctor>({
+export default function Create  () {
+  const navigate = useNavigate();
+  const [doctor, setDoctor] = useState({
     firstname: "",
     lastname: "",
     speciality: "",
+    address: "",
     city: "",
-    image: "",
+    zip: "",
     phone: "",
+    image: "",
   });
 
-  const navigate = useNavigate();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDoctor({ ...doctor, [e.target.name]: e.target.value });
+  };
 
-  const createDoctor = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/doctors/`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/doctors`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/ld+json",
+          "Accept": "application/ld+json",
         },
         body: JSON.stringify(doctor),
       });
 
       if (!response.ok) {
-        throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+        throw new Error("Erreur lors de l'ajout du médecin.");
       }
 
-      alert("Docteur créé avec succès.");
-      navigate("/"); // Redirection après création
+      await response.json();
+      toast.success("Médecin ajouté avec succès !");
+      navigate(`/`);
     } catch (error) {
-      console.error("Erreur lors de la création du docteur:", error);
+      toast.error((error as Error).message);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createDoctor();
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDoctor({
-      ...doctor,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold text-center text-blue-900 mb-8">
-        Ajouter un Docteur
-      </h2>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto"
-      >
-        <div className="space-y-6">
-          <div>
-            <label htmlFor="firstname" className="block text-lg font-medium text-gray-700 mb-2">
-              Prénom :
-            </label>
-            <input
-              type="text"
-              id="firstname"
-              name="firstname"
-              value={doctor.firstname}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="lastname" className="block text-lg font-medium text-gray-700 mb-2">
-              Nom :
-            </label>
-            <input
-              type="text"
-              id="lastname"
-              name="lastname"
-              value={doctor.lastname}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="speciality" className="block text-lg font-medium text-gray-700 mb-2">
-              Spécialité :
-            </label>
-            <input
-              type="text"
-              id="speciality"
-              name="speciality"
-              value={doctor.speciality}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="city" className="block text-lg font-medium text-gray-700 mb-2">
-              Ville :
-            </label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              value={doctor.city}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="image" className="block text-lg font-medium text-gray-700 mb-2">
-              URL de l'image :
-            </label>
-            <input
-              type="url"
-              id="image"
-              name="image"
-              value={doctor.image}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-lg font-medium text-gray-700 mb-2">
-              Téléphone :
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={doctor.phone}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Boutons */}
-          <div className="text-center flex justify-center space-x-4">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-all cursor-pointer"
-              onClick={createDoctor}
-            >
-              Créer
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="bg-gray-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-700 transition-all cursor-pointer"
-            >
-              Annuler
-            </button>
-          </div>
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-md bg-white shadow-2xl rounded-xl overflow-hidden border border-gray-100">
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6">
+          <h2 className="text-3xl font-extrabold text-white text-center tracking-wide">
+            Ajouter un Médecin
+          </h2>
         </div>
-      </form>
+        <form 
+          onSubmit={handleSubmit} 
+          className="p-6 space-y-4"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <input 
+              type="text" 
+              name="firstname" 
+              placeholder="Prénom" 
+              value={doctor.firstname} 
+              onChange={handleChange} 
+              required 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            />
+            <input 
+              type="text" 
+              name="lastname" 
+              placeholder="Nom" 
+              value={doctor.lastname} 
+              onChange={handleChange} 
+              required 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            />
+          </div>
+          
+          <input 
+            type="text" 
+            name="speciality" 
+            placeholder="Spécialité" 
+            value={doctor.speciality} 
+            onChange={handleChange} 
+            required 
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          />
+          
+          <input 
+            type="text" 
+            name="address" 
+            placeholder="Adresse" 
+            value={doctor.address} 
+            onChange={handleChange} 
+            required 
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <input 
+              type="text" 
+              name="city" 
+              placeholder="Ville" 
+              value={doctor.city} 
+              onChange={handleChange} 
+              required 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            />
+            <input 
+              type="text" 
+              name="zip" 
+              placeholder="Code Postal" 
+              value={doctor.zip} 
+              onChange={handleChange} 
+              required 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            />
+          </div>
+          
+          <input 
+            type="text" 
+            name="phone" 
+            placeholder="Téléphone" 
+            value={doctor.phone} 
+            onChange={handleChange} 
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          />
+          
+          <input 
+            type="text" 
+            name="image" 
+            placeholder="URL de l'image" 
+            value={doctor.image} 
+            onChange={handleChange} 
+            required 
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          />
+          
+          <button 
+            type="submit" 
+            className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg hover:opacity-90 transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
+          >
+            Ajouter
+          </button>
+          <button 
+            type="submit" 
+            onClick={() => navigate(-1)}
+            className="w-full cursor-pointer bg-gray-500 hover:bg-gray-700 text-white py-3 rounded-lg hover:opacity-90 transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
+          >
+            Annuler
+          </button>
+        </form>
+      </div>
     </div>
   );
-}
+};                    

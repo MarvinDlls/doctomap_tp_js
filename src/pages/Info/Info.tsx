@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "./Info.css";
 
 interface Doctor {
   id: number;
@@ -72,42 +71,54 @@ const deleteDoctor = async () => {
   }
 
   return (
-    <div className="container">
-    <div className="doctor-profile">
-      <div className="doctor-header">
-        <img 
-          src={doctor.image} 
-          alt={`Dr. ${doctor.firstname} ${doctor.lastname}`} 
-          className="doctor-image" 
-        />
-      </div>
-      <div className="doctor-info">
-        <h2 className="doctor-name">
-          Dr. {doctor.firstname} {doctor.lastname}
-        </h2>
-        <p className="doctor-specialty">{doctor.speciality}</p>
-        <div className="doctor-details">
-          <div className="info-item">
-            <i className="location-icon">📍</i>
-            <span>{doctor.city}</span>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full max-w-md p-6">
+        <div className="flex justify-center">
+          <img
+            src={doctor.image}
+            alt={`Dr. ${doctor.firstname} ${doctor.lastname}`}
+            className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover"
+          />
+        </div>
+
+        <div className="text-center mt-4">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Dr. {doctor.firstname} {doctor.lastname}
+          </h2>
+          <p className="text-gray-500 text-lg">{doctor.speciality}</p>
+
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-center text-gray-600">
+              <span className="text-lg">📍</span>
+              <span className="ml-2">{doctor.city}</span>
+            </div>
+            <div className="flex items-center justify-center text-gray-600">
+              <span className="text-lg">📞</span>
+              <span className="ml-2">{doctor.phone}</span>
+            </div>
           </div>
-          <div className="info-item">
-            <i className="phone-icon">📞</i>
-            <span>{doctor.phone}</span>
+
+          <div className="mt-6 flex justify-center space-x-4">
+            <Link to={`/edit/${doctor.id}`}>
+              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition cursor-pointer">
+                Mettre à jour
+              </button>
+            </Link>
+            <button
+              onClick={deleteDoctor}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition cursor-pointer"
+            >
+              Supprimer
+            </button>
+            <button
+              onClick={() => navigate(-1)}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 transition cursor-pointer"
+            >
+              Annuler
+            </button>
           </div>
         </div>
-        <div className="buttonContainer">
-        <Link to={`/edit/${doctor.id}`}>
-        <div className="buttonOne">
-        <button className="edit">Mettre à jour</button>
-        </div>
-        </Link>
-        <div className="buttonTwo">
-        <button className="delete" onClick={deleteDoctor}>Supprimer</button>
-        </div>
       </div>
-      </div>
-    </div>
     </div>
   );
 }

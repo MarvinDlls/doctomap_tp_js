@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './Home.css';
+import { Link } from 'react-router-dom';
 
 function Home() {
     interface Doctor {
@@ -43,6 +44,9 @@ function Home() {
                 <p><strong>Ville:</strong> {doctor.city}</p>
                 <p><strong>Téléphone:</strong> {doctor.phone}</p>
             </div>
+            <Link to="/info" className='underscore'>
+            <button className="button-style" role="button"><span className="text">Voir Plus</span></button>
+            </Link>
         </div>
         ))}
     </div>
